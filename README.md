@@ -43,10 +43,10 @@ python main.py --two_label True --video_path VIDEOPATH --label_csv CSV_FILE_OF_L
   
 |             |            | 
 |-------------|------------|
-| 0      | Laughing       |
-| 1   |   Smiling     |
-| 2   |   Crying     |
-| 3   |  Frowning \    |
+| 0           | Laughing   |
+| 1           | Smiling    |
+| 2           | Crying     |
+| 3           |  Frowning  |
 
 The directory has 3 example csv files: ```classes.csv```, ```verb.csv``` and ```noun.csv```.
   
@@ -71,8 +71,7 @@ Examples have been put in the directory with the name ```train_labels_single.csv
 When passing a video to the GUI for the first time, it must first be decoded - this is a fairly lengthy process, and depends on video length, resolution, fps etc.
 During this process the frames of the video are saved into a folder within the data folder. If the same video is passed to the GUI (or any video with the same name), the already decoded images will be used.
 
-Once the video has been decoded (or a folder with images exists already) the GUI will load a look like the following:
-(demo.PNG "The GUI")
+Once the video has been decoded (or a folder with images exists already) the GUI will load a look like the following: [](demo.PNG "The GUI")
 
 The following bullet points outline the main functionality of the GUI:
 * **Navigating though the video:**
