@@ -72,17 +72,17 @@ When passing a video to the GUI for the first time, it must first be decoded - t
 During this process the frames of the video are saved into a folder within the data folder. If the same video is passed to the GUI (or any video with the same name), the already decoded images will be used.
 
 Once the video has been decoded (or a folder with images exists already) the GUI will load a look like the following:
-![Alt text](/relative/path/to/img.jpg?raw=true "The GUI")
+(demo.PNG "The GUI")
 
 The following bullet points outline the main functionality of the GUI:
-* Navigating though the video:
+* **Navigating though the video:**
    * The main image shows the current frame of video, with the frame index shown above.
    * Prev/Next button (or the left/right arrow keys) can be used to move to the previous and next frame one at a time.
    * The Play button (and x2, x4 and x8) will automatically play the video (at real time and corresponding sped up speeds) and are stopped using the stop button (The stop button must be used to stop the playing, not repressing the play button)
    * The input box (bottom left) allows you to jump to a desired frame. Simply enter an integer value and click the jump to frame button.
    * Similarly you can drag the progress bar below the image to a desired frame and click the Jump button to skip to that frame.
  
-* Creating a label
+* **Creating a label:**
    * To create a label, first navigate to the start frame of the action.
    * Press the space bar to log the start frame of the action - the Start frame should now display the current frame
    * Navigate to the end of the action using methods outlined above.
