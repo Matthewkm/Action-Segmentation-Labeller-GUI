@@ -11,11 +11,11 @@ The GUI can be applied to any labelling problem via the use of a csv containing 
 
 # Installation 
 * Clone directory
-  * ```git clone https://github.com/Matthewkm/Segmentation-Labeler-for-action-recognition.git```
+   ```git clone https://github.com/Matthewkm/Segmentation-Labeler-for-action-recognition.git```
 * Move to directory and (optionally set up a virtual environment)
-  * ```cd action_labeller```
+   ```cd action_labeller```
 * Install required Python packages
-  * ```pip install -r requirements.txt```
+   ```pip install -r requirements.txt```
 * Install and add ffmpeg to environment path:
   * video decoding is done with ffmpeg via the command line and can be downloaded from https://www.gyan.dev/ffmpeg/builds/. Once downloaded add to the environment path (following https://video.stackexchange.com/questions/20495/how-do-i-set-up-and-use-ffmpeg-in-windows)
   
@@ -46,11 +46,27 @@ python main.py --two_label Flase --video_path VIDEOPATH --label_csv CSV_FILE_OF_
 | 3   |  Frowning \|
 
   
-# Using the GUI:
+# User Instructions:
 When passing a video to the GUI for the first time, it must first be decoded - this is a fairly lengthy process, and depends on video length, resolution, fps etc.
-During this process the frames of the video are saved into the data folder. If a video with the same name is passed to the GUI, the already decoded images will be used.
+During this process the frames of the video are saved into a folder within the data folder. If the same video is passed to the GUI (or any video with the same name), the already decoded images will be used.
 
 Once the video has been decoded (or a folder with images exists already) the GUI will load a look like the following:
+![Alt text](/relative/path/to/img.jpg?raw=true "The GUI")
 
-
-
+The following bullet points outline the main functionality of the GUI:
+* Navigating though the video:
+ * The main image shows the current frame of video, with the frame index shown above.
+ * Prev/Next button (or the left/right arrow keys) can be used to move to the previous and next frame one at a time.
+ * The Play button (and x2, x4 and x8) will automatically play the video (at real time and corresponding sped up speeds) and are stopped using the stop button (The stop button must be used to stop the playing, not repressing the play button)
+ * The input box (bottom left) allows you to jump to a desired frame. Simply enter an integer value and click the jump to frame button.
+ * Similarly you can drag the progress bar below the image to a desired frame and click the Jump button to skip to that frame.
+ 
+* Creating a label
+ * To create a label, first navigate to the start frame of the action.
+ * Press the space bar to log the start frame of the action - the Start frame should now display the current frame
+ * Navigate to the end of the action using methods outlined above.
+ * Press space bar again to log the end frame - the End Frame value should now show the current frame
+ * Select the label for the current action using the drop down boxes.
+ * Press Enter to add the label to the csv file. A new entry should appear in the table and the csv file will automatically save.
+ * At any point in the frame selection process the Esc key can be pressed to delete the current start and end frame selection.
+ 
