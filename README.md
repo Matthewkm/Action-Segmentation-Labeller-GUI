@@ -11,7 +11,7 @@ The GUI can be applied to any custom labelling problem via the use of custom csv
 
 # Installation 
 * Clone directory
-   ```git clone https://github.com/Matthewkm/Segmentation-Labeler-for-action-recognition.git```
+   ```git clone https://github.com/Matthewkm/Action-Recognition-Labeller-GUI.git```
 * Move to directory and (optionally set up a virtual environment)
    ```cd action_labeller```
 * Install required Python packages
