@@ -3,30 +3,13 @@ from tkintertable import TableCanvas, TableModel
 from PIL import ImageTk,Image 
 
 import os
-import time
-import pickle
 import csv
 import cv2
 
-import subprocess as sub
 from functools import partial
 
+from utils import create_list, vid2imgs
 
-
-#code for prepping video...
-
-def create_list(folder):
-	'''
-	converts a folder of images into a list of PIL images.
-	'''
-	video = []
-	for img in os.listdir(folder):
-		img_path = os.path.join(folder,img)
-		video.append(Image.open(img_path))
-	return video
-
-
-#usefull functions - could probably put into a seperate 
 
 class get_labels():
 
@@ -63,34 +46,7 @@ class get_labels():
 	def noun_dict(self):
 		return self._nouns
 
-
-def vid2array(video_path):
-
-	print('decoding the video, this may take a while... Once finished GUI will load')
-	#check if decoding has been done before, if so use that file
-	video_name = os.path.basename(video_path)[:-4] 
-
-	new_folder = os.path.join('data',video_name)
-
-
-	if os.path.isdir(new_folder): #if folder already exists
-		if len(os.listdir(new_folder)) == 0: #if folder is empty, decode the video into it.
-			bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
-			os.system(bashCommand)
-
-			return create_list(new_folder)
-
-		else: #assume the video has been successfully decoded already.
-			print('A folder with this video name already exists, loading that instead (much quicker)')
-			return create_list(new_folder) 
-
-	else: #need to decode the video into a folder of images - makes life easier...
-		os.mkdir(new_folder)
-		bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
-		os.system(bashCommand)
-
-		return create_list(new_folder)
-
+		
 class two_label_GUI:
 
 	def __init__(self, root, video_path, csv_path, verb_csv, noun_csv):  #might want to input vairous stuff here, i.e CSV and video paths... etc.

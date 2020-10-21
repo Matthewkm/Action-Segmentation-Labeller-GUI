@@ -2,37 +2,18 @@ from tkinter import *
 from tkintertable import TableCanvas, TableModel
 from PIL import ImageTk,Image 
 
-
 import os
-import time
-import pickle
 import csv
 import cv2
 
-import subprocess as sub
 from functools import partial
 
+from utils import create_list, vid2imgs
 
-
-#code for prepping video...
-
-def create_list(folder):
-	'''
-	converts a folder of images into a list of PIL images.
-	'''
-	video = []
-	for img in os.listdir(folder):
-		img_path = os.path.join(folder,img)
-		video.append(Image.open(img_path))
-	return video
-
-
-#usefull functions - could probably put into a seperate 
 
 class get_labels():
 
 	def __init__(self,labels_csv,):	
-		#this function will ultimetly parse an input csv containing all the verbs and nounds, for the moment ill just use example lists
 
 		def read_csv(the_csv):
 			with open(the_csv, mode='r') as infile:
@@ -55,39 +36,10 @@ class get_labels():
 		return self._labels
 
 
-def vid2array(video_path):
-
-	print('decoding the video, this may take a while... Once finished GUI will load')
-	#check if decoding has been done before, if so use that file
-	video_name = os.path.basename(video_path)[:-4] 
-
-	new_folder = os.path.join('data',video_name)
-
-
-	if os.path.isdir(new_folder): #if folder already exists
-		if os.listdir(new_folder) == 0: #if folder is empty, decode the video into it.
-			
-			bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
-			os.system(bashCommand)
-
-			return create_list(new_folder)
-
-		else: #assume the video has been successfully decoded already.
-			print('A folder with this video name already exists, loading that instead (much quicker)')
-			return create_list(new_folder) 
-
-	else: #need to decode the video into a folder of images - makes life easier...
-		os.mkdir(new_folder)
-		bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
-		os.system(bashCommand)
-
-		return create_list(new_folder)
-
 class single_label_GUI:
 
-	def __init__(self, root, video_path, csv_path, labels_csv):  #might want to input vairous stuff here, i.e CSV and video paths... etc.
+	def __init__(self, root, video_path, csv_path, labels_csv):
 
-		#dont want to run this every time, so only run __init__ once, probably a better way of doing this...
 		self.video_path = video_path
 		self.fps = cv2.VideoCapture(video_path).get(cv2.CAP_PROP_FPS)
 		self.csv_path = csv_path
@@ -158,7 +110,7 @@ class single_label_GUI:
 
 
 		#display image with current index.
-		self.images = vid2array(self.video_path) #list of all PIL images in video
+		self.images = vid2imgs(self.video_path) #list of all PIL images in video
 		self.max_index =  len(self.images)-1 
 		self.img =  ImageTk.PhotoImage(self.images[self.current_index].resize((896,504)))
 		self.img_panel = Label(self.window,image=self.img)
@@ -190,17 +142,17 @@ class single_label_GUI:
 
 
 	def read_csv(self):
+		#reads csv and displays table using tkintertable
 		self.tframe = Frame(self.window)
-		self.tframe.place(x=1200,y=350,width=600) #probs want to place.
+		self.tframe.place(x=1200,y=350,width=600) 
 		self.table = TableCanvas(self.tframe)
 		self.table.importCSV(self.csv_path)
 		self.table.show()
 
 	def write(self, message):
-		"""
-		This is a dodgy function that is used instead of regular print statement so the messages will be displayed within tkinter.
-		"""
-		if len(self.console_output) < 10:  #we want to collect last 10 lines i guess.
+		#function that is used instead of regular print statement to display messages within the GUI output box
+
+		if len(self.console_output) < 10:  #only collect last 10 lines of output.
 			self.console_output.append(message)
 		else:
 			self.console_output = self.console_output[1:]
@@ -210,6 +162,7 @@ class single_label_GUI:
 		return self.console_output  
 
 	def prev(self):
+		#move to next image
 		if self.current_index == 0:
 			self.update()
 		else:
@@ -217,6 +170,7 @@ class single_label_GUI:
 			self.update()
 
 	def nxt(self):
+		#move to previous image
 		if self.current_index == self.max_index:
 			self.update()
 		else:
@@ -224,6 +178,7 @@ class single_label_GUI:
 			self.update()
 
 	def play_video(self,speed):
+		#function that runs when play buttons are pressed.
 		self.speed = speed
 
 		def play():
@@ -275,7 +230,7 @@ class single_label_GUI:
 			self.nxt()
 		if event.keysym == 'Left':
 			self.prev()
-		if event.keysym == 'space': #this is not the best way to handle this, however it will work...
+		if event.keysym == 'space':
 			if self.current_state == 0:
 				self.start_frame = self.current_index
 				self.write('selected a start frame, press space to select end frame or esc to cancel selection')
@@ -289,8 +244,8 @@ class single_label_GUI:
 				self.end_frame = self.current_index
 			self.update()
 		if event.keysym == 'Return':
-			if self.current_state == 2: #only care is somone is in state 2.
-				self.make_label() #will also need the actual label here... #can probs get via a global within the make_label function?
+			if self.current_state == 2: #only care is someone is in state 2.
+				self.make_label() 
 				self.current_state=0
 				self.start_frame = None
 				self.end_frame = None
@@ -310,8 +265,8 @@ class single_label_GUI:
 
 		_class = self.class_drop.get()
 
+		#still need to implement checks here, e.g make sure end frame is after begining, that they are not the same frame etc...
 
-		#do some checks here, need to make sure end frame is after begining, that they are not the same frame etc...
 		with open(self.csv_path,'a',newline='') as csvfile:
 			linewriter = csv.writer(csvfile,delimiter=',')
 			linewriter.writerow([video_name,self.start_frame,self.end_frame,_class,self.CLASSES.index(_class)])
@@ -322,7 +277,7 @@ class single_label_GUI:
 
 	def update(self):
 		'''
-		the main rfunction that updates everything...
+		the main rfunction that updates everything, run efter nearly every function
 		'''
 
 		print(self.current_state)
