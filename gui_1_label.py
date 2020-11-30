@@ -8,10 +8,10 @@ import cv2
 
 from functools import partial
 
-from utils import create_list, vid2imgs
+from utils import decode_video, get_image
 
 
-class get_labels():
+class get_labels_single():
 
 	def __init__(self,labels_csv,):	
 
@@ -35,17 +35,63 @@ class get_labels():
 	def label_dict(self):
 		return self._labels
 
+class get_labels_duo():
 
-class single_label_GUI:
+	def __init__(self,verb_csv,noun_csv):	
+		#this function will ultimetly parse an input csv containing all the verbs and nounds, for the moment ill just use example lists
 
-	def __init__(self, root, video_path, csv_path, labels_csv):
+		def read_csv(the_csv):
+			with open(the_csv, mode='r') as infile:
+				reader = csv.reader(infile)
+				mydict = {rows[0]:rows[1] for rows in reader}
+			return mydict
+
+		self._verbs =  read_csv(verb_csv)
+		self._nouns =  read_csv(noun_csv)
+
+
+	def verbs(self):
+		#turns the dic into a list of nouns used to populate the options menu.
+		dictlist = []
+		for _, value in self._verbs.items():
+			dictlist.append(value)
+		return dictlist
+
+	def nouns(self):
+		dictlist = []
+		for _, value in self._nouns.items():
+			dictlist.append(value)
+		return dictlist
+
+
+	def verb_dict(self):
+		return self._verbs
+
+	def noun_dict(self):
+		return self._nouns
+
+
+class label_GUI:
+
+	def __init__(self, root, video_path, csv_path, labels_csv, mode):
 
 		self.video_path = video_path
 		self.fps = cv2.VideoCapture(video_path).get(cv2.CAP_PROP_FPS)
 		self.csv_path = csv_path
-		self.labels = get_labels(labels_csv)
-		self.CLASSES = self.labels.labels()
-		self.CLASSES_DICT = self.labels.label_dict()
+
+		self.mode = mode
+
+		if self.mode == 'single':
+			self.labels = get_labels_single(labels_csv)
+			self.CLASSES = self.labels.labels()
+			self.CLASSES_DICT = self.labels.label_dict()
+		if self.mode == 'duo':
+			verb_csv,noun_csv = labels_csv
+			self.labels = get_labels_duo(verb_csv,noun_csv)
+			self.NOUNS = self.labels.nouns()
+			self.NOUNS_DICT = self.labels.noun_dict()
+			self.VERBS = self.labels.verbs()
+			self.VERBS_DICT = self.labels.verb_dict()
 
 
 		self.window = root
@@ -60,17 +106,35 @@ class single_label_GUI:
 
 		#pay attention to all keypresses
 		self.window.bind("<Key>",self.key_pressed)
+
+		#decode the video here (and check if its already been decoded)
+		self.image_folder = decode_video(self.video_path)
 		
 		#==================== create all the widgets =========================:
 		
 		#label selection
-		self.label = Label(self.window,text='Select Label:',font=("Courier", 15))
-		self.label.place(x=1150,y=150)
+		if self.mode == 'single':
+			self.label = Label(self.window,text='Select Label:',font=("Courier", 15))
+			self.label.place(x=1150,y=150)
 
-		self.class_drop = StringVar(self.window)
-		self.class_drop.set(self.CLASSES[0])
-		self.w_classes = OptionMenu(*(self.window, self.class_drop) + tuple(self.CLASSES))
-		self.w_classes.place(x=1400,y=150)
+			self.class_drop = StringVar(self.window)
+			self.class_drop.set(self.CLASSES[0])
+			self.w_classes = OptionMenu(*(self.window, self.class_drop) + tuple(self.CLASSES))
+			self.w_classes.place(x=1400,y=150)
+
+		if self.mode == 'duo':
+			self.label = Label(self.window,text='Select Label:',font=("Courier", 15))
+			self.label.place(x=1150,y=150)
+
+			self.noun_drop = StringVar(self.window)
+			self.noun_drop.set(self.NOUNS[0])
+			self.w_noun = OptionMenu(*(self.window, self.noun_drop) + tuple(self.NOUNS))
+			self.w_noun.place(x=1550,y=150)
+
+			self.verb_drop = StringVar(self.window)
+			self.verb_drop.set(self.VERBS[0])
+			self.w_verb = OptionMenu(*(self.window, self.verb_drop) + tuple(self.VERBS))
+			self.w_verb.place(x=1400,y=150)
 
 		#play buttons:
 		self.prev_button = Button(self.window, text="Prev", height=100,width=100,command=self.prev)
@@ -110,9 +174,10 @@ class single_label_GUI:
 
 
 		#display image with current index.
-		self.images = vid2imgs(self.video_path) #list of all PIL images in video
-		self.max_index =  len(self.images)-1 
-		self.img =  ImageTk.PhotoImage(self.images[self.current_index].resize((896,504)))
+
+		self.image = get_image(self.image_folder,self.current_index) #retun the current image from 
+		self.max_index =  len(os.listdir(self.image_folder))-1 
+		self.img =  ImageTk.PhotoImage(self.image.resize((896,504)))
 		self.img_panel = Label(self.window,image=self.img)
 		self.img_panel.image = self.img
 		self.img_panel.place(x=150,y=75)
@@ -158,24 +223,24 @@ class single_label_GUI:
 			self.console_output = self.console_output[1:]
 			self.console_output.append(message)
 
-		self.update()
+		self.update_all()
 		return self.console_output  
 
 	def prev(self):
 		#move to next image
 		if self.current_index == 0:
-			self.update()
+			self.update_all()
 		else:
 			self.current_index -=1
-			self.update()
+			self.update_all()
 
 	def nxt(self):
 		#move to previous image
 		if self.current_index == self.max_index:
-			self.update()
+			self.update_all()
 		else:
 			self.current_index +=1
-			self.update()
+			self.update_all()
 
 	def play_video(self,speed):
 		#function that runs when play buttons are pressed.
@@ -191,7 +256,8 @@ class single_label_GUI:
 			else:	
 				self.currently_playing = True
 				self.current_index+=1
-				self.update()
+				self.update_image()
+				delay = int(max(1,(delay-(1000*finish))))
 				self.after_id = self.window.after(delay,play)
 
 		play()
@@ -221,7 +287,7 @@ class single_label_GUI:
 
 	def goto_slider(self):
 		self.current_index = self.slider.get() #set current index to slider value.
-		self.update()
+		self.update_all()
 
 
 	#code for using keyboard shortcuts.
@@ -242,7 +308,7 @@ class single_label_GUI:
 				self.current_state = 2
 			elif self.current_state == 2:
 				self.end_frame = self.current_index
-			self.update()
+			self.update_all()
 		if event.keysym == 'Return':
 			if self.current_state == 2: #only care is someone is in state 2.
 				self.make_label() 
@@ -251,37 +317,60 @@ class single_label_GUI:
 				self.end_frame = None
 			else:
 				self.write('You must make a start and end frame selection before submitting the label')
-			self.update()
+			self.update_all()
 		if event.keysym == 'Escape':
 			#if escape is hit, delete all frame selections and return to state 0, ready for a new input sequence.
 			self.start_frame = None #delete frame selection
 			self.end_frame = None
 			self.current_state = 0 #set current state back to 0.
 			self.write('cancled frame selection')
-			self.update()
+			self.update_all()
 
 	def make_label(self):
 		video_name = os.path.basename(self.video_path)[:-4] 
 
-		_class = self.class_drop.get()
+		if self.mode == 'single':
+			_class = self.class_drop.get()
 
-		#still need to implement checks here, e.g make sure end frame is after begining, that they are not the same frame etc...
+			with open(self.csv_path,'a',newline='') as csvfile:
+				linewriter = csv.writer(csvfile,delimiter=',')
+				linewriter.writerow([video_name,self.start_frame,self.end_frame,_class,self.CLASSES.index(_class)])
 
-		with open(self.csv_path,'a',newline='') as csvfile:
-			linewriter = csv.writer(csvfile,delimiter=',')
-			linewriter.writerow([video_name,self.start_frame,self.end_frame,_class,self.CLASSES.index(_class)])
+			self.write('added action {} between frames {} and {} to csv file'.format(_class,self.start_frame,self.end_frame))
 
-		self.write('added action {} between frames {} and {} to csv file'.format(_class,self.start_frame,self.end_frame))
+		if self.mode == 'duo':
+			verb = self.verb_drop.get()
+			noun = self.noun_drop.get()
+
+					#still need to implement checks here, e.g make sure end frame is after begining, that they are not the same frame etc...
+			with open(self.csv_path,'a',newline='') as csvfile:
+				linewriter = csv.writer(csvfile,delimiter=',')
+				linewriter.writerow([video_name,self.start_frame,self.end_frame,verb,self.VERBS.index(verb),noun,self.NOUNS.index(noun)])
+
+			self.write('added label to csv file, action {} {} between frames {} and {}'.format(verb,noun,self.start_frame,self.end_frame))
+
 		self.read_csv()
 
 
-	def update(self):
+	def update_image(self):
+		"""
+		Same as update_all except only updates the image and the current frame - quicker to execute as doenst update csv table
+		"""
+		pil_img = get_image(self.image_folder,self.current_index)
+		img =  ImageTk.PhotoImage(pil_img.resize((896,504)))  #size is 896x504
+		self.img_panel.configure(image=img)
+		self.img_panel.image = img
+
+		self.frame_no['text'] = "Current Fame: {}".format(self.current_index)
+		self.slider.set(self.current_index)
+
+	def update_all(self):
 		'''
-		the main rfunction that updates everything, run efter nearly every function
+		the main function that updates everything, run efter nearly every function
 		'''
 
-		print(self.current_state)
-		img =  ImageTk.PhotoImage(self.images[self.current_index].resize((896,504)))
+		pil_img = get_image(self.image_folder,self.current_index)
+		img =  ImageTk.PhotoImage(pil_img.resize((896,504)))
 		self.img_panel.configure(image=img)
 		self.img_panel.image = img
 
@@ -295,5 +384,4 @@ class single_label_GUI:
 		self.console_listbox.delete(0,'end')
 		for item in self.console_output:
 			self.console_listbox.insert(END,item)
-
 
