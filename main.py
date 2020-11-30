@@ -1,6 +1,5 @@
 from tkinter import *
 from label_gui import label_GUI
-#from gui_2_label  import two_label_GUI
 
 import argparse
 
