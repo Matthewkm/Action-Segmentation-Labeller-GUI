@@ -257,7 +257,6 @@ class label_GUI:
 				self.currently_playing = True
 				self.current_index+=1
 				self.update_image()
-				delay = int(max(1,(delay-(1000*finish))))
 				self.after_id = self.window.after(delay,play)
 
 		play()
