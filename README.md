@@ -23,11 +23,11 @@ The GUI can be applied to any custom labelling problem via the use of custom csv
 * The GUI is opened via running main.py and can either operate in single label mode or verb,noun (two label) model via the two_label boolean:
 
 ```python
-python main.py --two_label Flase --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABELS --classes_csv CSV_OF_CLASSES
+python main.py --mode single --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABELS --classes_csv CSV_OF_CLASSES
 ```
 
 ```python
-python main.py --two_label True --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABELS --verb_csv CSV_OF_VERBS --noun_csv CSV_OF_NOUNS 
+python main.py --mode duo --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABELS --verb_csv CSV_OF_VERBS --noun_csv CSV_OF_NOUNS 
 ```
   * Arguments:
     * two_label - Boolian, if True operate in verb,noun mode (will require a path to a verb and noun csv)
