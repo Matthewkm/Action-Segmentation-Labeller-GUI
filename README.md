@@ -30,7 +30,7 @@ python main.py --mode single --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABE
 python main.py --mode duo --video_path VIDEOPATH --label_csv CSV_FILE_OF_LABELS --verb_csv CSV_OF_VERBS --noun_csv CSV_OF_NOUNS 
 ```
   * Arguments:
-    * two_label - Boolian, if True operate in verb,noun mode (will require a path to a verb and noun csv)
+    * mode - Currently support either 'single' or 'duo' mode corresponding to single label classes or noun,verb classes
     * video_path - The path to the video to be labelled, currently supports video formats supported by ffmpeg (only tested on .avi)
     * label_csv - Path to the csv file where annotations will be added to. The GUI is set to append to this CSV so wont delete any labels already exiting within the file.
     * classes_csv - Path to csv file containing desired classes for annotations.
