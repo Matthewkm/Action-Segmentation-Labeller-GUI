@@ -2,21 +2,17 @@
 import os
 from PIL import Image 
 
-def create_list(folder):
-	'''
-	converts a folder of images into a list of PIL images.
-	'''
-	video = []
-	for img in os.listdir(folder):
-		img_path = os.path.join(folder,img)
-		video.append(Image.open(img_path))
-	return video
 
-def vid2imgs(video_path):
+
+def decode_video(video_path):
+	"""
+	function that decodes a given video into its frames and stores them in a folder of the same named "/data/videoname"
+	returns the name of the video and the new_folder path for use in main.py
+	"""
 
 	#if running first time must create data folder.
 	if os.path.exists('data') == False:
-		os.mkdir('data')
+		os.mkdir('data')	
 
 	#check if decoding has been done before, if so use that file
 	video_name = os.path.basename(video_path)[:-4] 
@@ -29,12 +25,11 @@ def vid2imgs(video_path):
 			print('decoding the video, this may take a while... Once finished GUI will load')
 			bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
 			os.system(bashCommand)
+			return new_folder
 
-			return create_list(new_folder)
-
-		else: #assume the video has been successfully decoded already.
+		else:
 			print('A folder with this video name already exists, loading that instead (much quicker)')
-			return create_list(new_folder) 
+			return new_folder
 
 	else: #need to decode the video into a folder of images - makes life easier...
 		print('decoding the video, this may take a while... Once finished GUI will load')
@@ -42,4 +37,13 @@ def vid2imgs(video_path):
 		bashCommand = 'ffmpeg -i "{}" -vf scale=-1:720 -q:v 0  "{}/%06d.jpg'.format(video_path,new_folder,video_name) #create clips.
 		os.system(bashCommand)
 
-		return create_list(new_folder)
+		return new_folder
+
+def get_image(folder,idx):
+	'''
+	given a folder of images and an id will return a PIL image of that index (this assumes images are stored with names in alpabetical order - this should be true unless you renamed images )
+	'''
+	image_name = os.listdir(folder)[idx]
+	image_path = os.path.join(folder,image_name)
+	
+	return Image.open(image_path)
