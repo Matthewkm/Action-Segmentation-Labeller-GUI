@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
 	print(args.two_label)
 	if args.two_label == True:  #if using verb,noun labeling system.
-		print('herherhehrheher')
 		verb_csv = args.verb_csv
 		noun_csv = args.noun_csv
 		two_label_GUI(root,video_path,label_csv,verb_csv,noun_csv)
