@@ -5,6 +5,7 @@ from PIL import ImageTk,Image
 import os
 import csv
 import cv2
+import time
 
 from functools import partial
 
@@ -256,7 +257,10 @@ class label_GUI:
 			else:	
 				self.currently_playing = True
 				self.current_index+=1
+				start = time.time()
 				self.update_image()
+				finish = int(1000*(time.time() - start))
+				delay = max(1,(delay-finish)) #this factors in the time to retrieve and display an image into the fps calculations.
 				self.after_id = self.window.after(delay,play)
 
 		play()
