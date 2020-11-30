@@ -61,7 +61,7 @@ The directory has 3 example csv files: ```classes.csv```, ```verb.csv``` and ```
    
 |   Vid_id    |    Start_frame    |  End_frame  |  verb    |  verb_id  |  noun    |  noun_id  |
 |-------------|-------------------|-------------|----------|-----------|----------|-----------|
-| vid_0       | 1228              | 1930        |  slowly  |  05       |  Dancing |  32       |
+| vid_0       | 1228              | 1930        |  Start   |  05       |  Dancing |  32       |
 
 Examples have been put in the directory with the name ```train_labels_single.csv``` and ```train_labels_double.csv```.
 
