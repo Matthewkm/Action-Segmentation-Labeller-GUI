@@ -364,7 +364,7 @@ class label_GUI:
 		self.img_panel.configure(image=img)
 		self.img_panel.image = img
 
-		self.frame_no['text'] = "Current Fame: {}".format(self.current_index)
+		self.frame_no['text'] = "Current Frame: {}".format(self.current_index)
 		self.slider.set(self.current_index)
 
 	def update_all(self):
@@ -380,7 +380,7 @@ class label_GUI:
 		self.slider.set(self.current_index)
 		self.table.show()
 
-		self.frame_no['text'] = "Current Fame: {}".format(self.current_index)
+		self.frame_no['text'] = "Current Frame: {}".format(self.current_index)
 		self.start_no['text'] = "Start Frame: {}".format(self.start_frame)
 		self.end_no['text'] = "End Frame: {}".format(self.end_frame)
 
