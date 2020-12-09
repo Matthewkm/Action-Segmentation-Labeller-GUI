@@ -357,7 +357,7 @@ class label_GUI:
 
 	def update_image(self):
 		"""
-		Same as update_all except only updates the image and the current frame - quicker to execute as doenst update csv table
+		Same as update_all except only updates the image and the current frame - quicker to execute as doesn't update csv table
 		"""
 		pil_img = get_image(self.image_folder,self.current_index)
 		img =  ImageTk.PhotoImage(pil_img.resize((896,504)))  #size is 896x504
@@ -369,7 +369,7 @@ class label_GUI:
 
 	def update_all(self):
 		'''
-		the main function that updates everything, run efter nearly every function
+		the main function that updates the display
 		'''
 
 		pil_img = get_image(self.image_folder,self.current_index)
