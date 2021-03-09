@@ -292,6 +292,11 @@ class label_GUI:
 		self.current_index = self.slider.get() #set current index to slider value.
 		self.update_all()
 
+	def _on_mousewheel(self, event):
+		if event.delta < 0: #if scroll down
+			self.prev()
+		if event.delta > 0: #if scrolled up
+			self.nxt()
 
 	#code for using keyboard shortcuts.
 	def key_pressed(self,event):
