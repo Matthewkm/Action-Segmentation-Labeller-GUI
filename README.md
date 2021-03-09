@@ -76,7 +76,7 @@ Once the video has been decoded (or a folder with images exists already) the GUI
 
 * **Navigating though the video:**
    * The main image shows the current frame of video, with the frame index shown above.
-   * Prev/Next button (or the left/right arrow keys) can be used to move to the previous and next frame one at a time.
+   * Prev/Next button (or the left/right arrow keys or scroll up/down) can be used to move to the previous and next frame one at a time.
    * The Play button (and x2, x4 and x8) will automatically play the video (at real time and corresponding sped up speeds) and are stopped using the stop button (The stop button must be used to stop the playing, not repressing the play button)
    * The input box (bottom left) allows you to jump to a desired frame. Simply enter an integer value and click the jump to frame button.
    * Similarly you can drag the progress bar below the image to a desired frame and click the Jump button to skip to that frame.
