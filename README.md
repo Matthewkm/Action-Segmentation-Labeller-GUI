@@ -1,4 +1,4 @@
-# GUI for Temporally Labelling Action Segments within Video data for use within Action Recognition.
+# GUI for Temporally Labelling Action Segments within Video data for use within Action Segmentation and Recognition.
 
 This is a simplistic and lightweight GUI implemented in python for producing segment level labels for action recognition in untrimmed videos.
 
